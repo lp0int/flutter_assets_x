@@ -1,13 +1,16 @@
 ## 说明
 
+原插件是[flutter_assets](https://marketplace.visualstudio.com/items?itemName=icofans.flutter-assets)，作者[icofans](https://github.com/icofans),
+本插件修改了工作区目录获取的方式，和其他的一些细微修改
+
 基于auto_assets插件修改,修改了配置方式, pubspec自动添加声明等...
 
-1、在项目pubspec.yaml下添加：
+1、在项目pubspec.yaml下添加(若不添加将使用如下默认配置)：
 
-```json
+```yaml
 flutter_assets:
-  assets_path: assets/images/
-  output_path: lib/common/assets/
+  assets_path: assets/images
+  output_path: lib/generated/assets
   package: module_home
 ```
 
@@ -15,7 +18,7 @@ flutter_assets:
 - `output_path` 代表自动生成的代码的根目录。
 - `package` 指定模块，会生成模块相应的声明代码。
 
-2、在 VSCode -> Extensions 下搜索 `flutter_assets` 并安装, 重新打开项目
+2、在 VSCode -> Extensions 下搜索 `flutter_assets_x` 并安装, 重新打开项目
 
 3、如资源目录如下:
 
@@ -38,7 +41,7 @@ flutter_assets:
 
 生成dart文件如下:
 
-lib/common/assets/assets.dart
+lib/generated/assets/assets.dart
 
 ```dart
 class Assets {
@@ -53,7 +56,7 @@ class Assets {
   static const String tabHome = "assets/images/tab/home.png";
 }
 ```
-lib/common/assets/assets_images.dart
+lib/generated/assets/assets_images.dart
 
 ```dart
 import 'package:flutter/widgets.dart';
@@ -71,7 +74,7 @@ class AssetImages {
   static AssetImage get tabHome => const AssetImage(Assets.tabHome);
 }
 ```
-lib/common/assets/flutter_assets.dart
+lib/generated/assets/flutter_assets.dart
 ```dart
 export 'assets.dart';
 export 'assets_images.dart';

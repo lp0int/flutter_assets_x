@@ -1,6 +1,6 @@
 {
-    "name": "flutter-assets",
-    "displayName": "flutter_assets",
+    "name": "flutter-assets-x",
+    "displayName": "flutter_assets_x",
     "description": "自动生成资源文件的dart代码",
     "keywords": [
         "flutter",
@@ -21,26 +21,25 @@
     ],
     "contributes": {
         "menus": {
-			"explorer/context": [
-				{
-					"when": "explorerResourceIsFolder",
-					"command": "flutterassets.generateAssets",
-					"group": "flutterassets@1"
-				}
-			]
-		},
-		"commands": [
-			{
-				"command": "flutterassets.generateAssets",
-				"title": "Generate Assets"
-			}
-		]
-	},
+            "explorer/context": [
+                {
+                    "when": "explorerResourceIsFolder",
+                    "command": "flutterassetsx.generateAssets",
+                    "group": "flutterassets@1"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "flutterassetsx.generateAssets",
+                "title": "Generate Assets"
+            }
+        ]
+    },
     "main": "./src/extension",
     "scripts": {
         "test": "node ./src/extension.js"
     },
-    
     "dependencies": {
         "chokidar": "^3.0.2",
         "imagemin": "^7.0.0",
@@ -51,10 +50,10 @@
         "lodash": "^4.17.15",
         "readline": "^1.3.0"
     },
-    "license": "SEE LICENSE IN LICENSE.txt",
+    "license": "Apache-2.0",
     "bugs": {
         "url": "https://github.com/sxei/vscode-plugin-demo/issues"
     },
-    "homepage": "https://github.com/icofans/flutter-assets/blob/main/README.md",
-    "repository": "https://github.com/icofans/flutter-assets.git"  
+    "homepage": "https://github.com/lp0int/flutter_assets_x/blob/main/README.md",
+    "repository": "https://github.com/lp0int/flutter_assets_x.git"
 }
