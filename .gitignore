@@ -5,6 +5,7 @@
 
 ### Node ###
 # Logs
+.DS_Store
 logs
 *.log
 npm-debug.log*
@@ -98,3 +99,4 @@ typings/
 #!! ERROR: vscode is undefined. Use list command to see defined gitignore types !!#
 
 # End of https://www.gitignore.io/api/node,javascripts,vscode
+.DS_Store
