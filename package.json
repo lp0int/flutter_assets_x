@@ -15,7 +15,7 @@
     "categories": [
         "Other"
     ],
-    "icon": "https://github.com/lp0int/flutter_assets_x/blob/main/images/icon.png",
+    "icon": "images/icon.png",
     "activationEvents": [
         "*"
     ],
