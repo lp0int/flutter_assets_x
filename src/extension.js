@@ -15,7 +15,12 @@ exports.activate = function (context) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand('flutterassetsx.generateAssets', async (e) => {
-      const path = !e ? vscode.workspace.workspaceFolders[0].uri.path : e.path.toString();
+      var folders = vscode.workspace.workspaceFolders;
+      if (!folders) {
+        vscode.window.showWarningMessage('This takes effect only in the flutter module directory');
+        return;
+      }
+      const path = !e ? folders[0].uri.path : e.path.toString();
       const i = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\")) + 1;
       const yamlFilePath = `${path}/${Constant.FLUTTER_PUBSPEC}`;
       const fs = require("fs");
@@ -31,13 +36,15 @@ exports.activate = function (context) {
     }));
 
   var folders = vscode.workspace.workspaceFolders;
-  const rootPath = folders[0].uri.path;
-  console.log(rootPath);
+  if (folders) {
+    const rootPath = folders[0].uri.path;
+    console.log(rootPath);
 
-  require("./ui/ui.js").isVerbose = true;
-  const { trimEnd } = require("lodash/string");
-  const FlutterAssets = require("./flutter_assets.js");
-  new FlutterAssets(trimEnd(rootPath, "/")).start();
+    require("./ui/ui.js").isVerbose = true;
+    const { trimEnd } = require("lodash/string");
+    const FlutterAssets = require("./flutter_assets.js");
+    new FlutterAssets(trimEnd(rootPath, "/")).start();
+  }
 };
 
 /**
