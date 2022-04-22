@@ -15,7 +15,7 @@ exports.activate = function (context) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand('flutterassetsx.generateAssets', async (e) => {
-      const path = !e ? vscode.workspace.rootPath : e.path.toString();
+      const path = !e ? vscode.workspace.workspaceFolders[0].uri.path : e.path.toString();
       const i = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\")) + 1;
       const yamlFilePath = `${path}/${Constant.FLUTTER_PUBSPEC}`;
       const fs = require("fs");

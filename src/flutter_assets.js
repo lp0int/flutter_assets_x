@@ -7,6 +7,11 @@ class FlutterAssets {
     this.root = root;
   }
 
+  restart() {
+    this.stop();
+    this.start();
+  }
+
   stop() {
     this.folderWatcher.stop();
   }
@@ -31,11 +36,14 @@ class FlutterAssets {
       throw new Error("root path must have an pubspec.yaml file");
     }
   }
+  extraConfigFileContent() {
+    return this._extraConfigFileContent();
+  }
 
   _extraConfigFileContent() {
     const yaml = require("js-yaml");
     const fs = require("fs");
-    let config, assets, code, packageName;
+    let config, assets, code, packageName, compressImages;
 
     const doc = yaml.safeLoad(fs.readFileSync(Constant.FLUTTER_PUBSPEC));
     if (!doc.hasOwnProperty("flutter_assets")) {
@@ -43,6 +51,7 @@ class FlutterAssets {
       config = {
         assets_path: "assets/images",
         output_path: "lib/generated/assets",
+        compress_images: false,
         package: ""
       };
       vscode.window.showWarningMessage('pubspec.yaml file not found flutter_assets config，use default config');
@@ -50,6 +59,7 @@ class FlutterAssets {
       config = doc.flutter_assets;
     }
     assets = config.assets_path;
+    compressImages = config.compress_images;
     code = config.output_path || "lib/generated/assets";
     packageName = config.package || "";
     // const config = doc.flutter_assets;
@@ -68,7 +78,9 @@ class FlutterAssets {
       assets_path: flatten([assets]).map(a => trimEnd(a, "/")),
       output_path: trimEnd(code, "/"),
       pubspec: Constant.FLUTTER_PUBSPEC,
-      packageName: packageName
+      packageName: packageName,
+      compressImages: compressImages,
+      yaml_file_path: `${this.root}/${Constant.FLUTTER_PUBSPEC}`,
     };
   }
 }

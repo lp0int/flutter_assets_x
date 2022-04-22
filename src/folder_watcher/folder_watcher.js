@@ -1,4 +1,5 @@
 const UI = require("../ui/ui.js");
+const vscode = require("vscode");
 
 class FolderWacther {
   constructor(config) {
@@ -7,6 +8,8 @@ class FolderWacther {
 
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
+    this._rewatch = this._rewatch.bind(this);
+    this._updateConfig = this._updateConfig.bind(this);
     this._addFile = this._addFile.bind(this);
     this._removeFile = this._removeFile.bind(this);
     this._changeFile = this._changeFile.bind(this);
@@ -15,26 +18,50 @@ class FolderWacther {
     this._reGenerate = this._reGenerate.bind(this);
     this._supportedFile = this._supportedFile.bind(this);
     this._compressAssets = this._compressAssets.bind(this);
+
+    this.chokidar = require("chokidar");
+    this.watcher = this.chokidar.watch(this.config.assets_path, {
+      ignored: /(^|[\/\\])\..*$/,
+    });
+  }
+
+  _rewatch() {
+    this.watcher.unwatch();
+    this.watcher.close();
+    this.watcher = this.chokidar
+      .watch(this.config.assets_path, {
+        ignored: /(^|[\/\\])\..*$/,
+      })
+      .on("add", this._addFile)
+      .on("unlink", this._removeFile)
+      .on("change", this._changeFile);
   }
 
   stop() {
-    const chokidar = require("chokidar");
-    chokidar.unwatch(this.config.assets_path);
+    this.watcher.unwatch();
+    this.watcher.close();
   }
 
   start() {
-    const chokidar = require("chokidar");
-    chokidar
-      .watch(this.config.assets_path, { ignored: /(^|[\/\\])\..*$/ })
-      .on("add", this._addFile);
-
-    chokidar
-      .watch(this.config.assets_path, { ignored: /(^|[\/\\])\..*$/ })
-      .on("unlink", this._removeFile);
-
-    chokidar
-      .watch(this.config.assets_path, { ignored: /(^|[\/\\])\..*$/ })
+    this.watcher
+      .on("add", this._addFile)
+      .on("unlink", this._removeFile)
       .on("change", this._changeFile);
+
+    this.chokidar
+      .watch(this.config.yaml_file_path, { ignored: /(^|[\/\\])\..*$/ })
+      .on("change", this._updateConfig);
+  }
+
+  _updateConfig() {
+    const FlutterAssets = require("../flutter_assets.js");
+    const { trimEnd } = require("lodash/string");
+    const path = vscode.workspace.workspaceFolders[0].uri.path;
+    const config = new FlutterAssets(
+      trimEnd(path, "/")
+    ).extraConfigFileContent();
+    this.config = config;
+    this._rewatch();
   }
 
   _addFile(path) {
@@ -81,7 +108,7 @@ class FolderWacther {
 
     UI.step("regenerate dart code", 1);
     const CodeGen = require("../code_gen/code_gen.js");
-    new CodeGen(this.config.output_path, infos,this.config.packageName).gen();
+    new CodeGen(this.config.output_path, infos, this.config.packageName).gen();
 
     UI.step("regenerate pubspec.yaml assets", 1);
     const PubspecGen = require("../pubspec/pubspec_gen.js");
@@ -91,13 +118,13 @@ class FolderWacther {
   _unifyInfos() {
     /// 重新构造 infos
     const uniqueInfos = {};
-    Object.values(this.infos).forEach(info => {
+    Object.values(this.infos).forEach((info) => {
       if (!uniqueInfos[info.identifier]) {
         uniqueInfos[info.identifier] = {
           varients: [info.path],
           ext: info.ext,
           identifier: info.identifier,
-          tag: `${info.folder}/${info.paths.join("/")}${info.ext}`
+          tag: `${info.folder}/${info.paths.join("/")}${info.ext}`,
         };
       } else {
         const varients = uniqueInfos[info.identifier].varients;
@@ -121,7 +148,10 @@ class FolderWacther {
     try {
       UI.step("get asset info", 1);
       const AssetsInfo = require("./assets_info.js");
-      this.infos[path] = new AssetsInfo(path, this.config.assets_path).resolve();
+      this.infos[path] = new AssetsInfo(
+        path,
+        this.config.assets_path
+      ).resolve();
     } catch (error) {
       UI.warning(`Invalid Path: ${error.message}`, 2);
       UI.verbose(error.stack, 2);
@@ -130,6 +160,9 @@ class FolderWacther {
 
   /// 压缩资源
   _compressAssets(path) {
+    if (!this.config.compressImages) {
+      return;
+    }
     UI.step("optimize image", 1);
     const ImageOpt = require("../image_opt/image_opt.js");
     new ImageOpt(path).opt();
