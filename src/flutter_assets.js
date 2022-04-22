@@ -59,7 +59,7 @@ class FlutterAssets {
       config = doc.flutter_assets;
     }
     assets = config.assets_path;
-    compressImages = config.compress_images;
+    compressImages = config.compress_images || false;
     code = config.output_path || "lib/generated/assets";
     packageName = config.package || "";
     // const config = doc.flutter_assets;
