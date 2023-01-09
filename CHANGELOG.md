@@ -1,5 +1,8 @@
 # Change Log
 
+## [V1.3.3]
+- 添加enable_file_extension配置项
+- 修复部分bug
 
 ## [V1.3.1]
 - 修复在没打开文件夹的时候的错误

@@ -68,8 +68,8 @@ class FolderWacther {
     if (!this._supportedFile(path)) {
       return;
     }
-
-    UI.step(`Add: ${path}`);
+    if (path.startsWith('assets'))
+      UI.step(`Add: ${path}`);
 
     if (!this.infos[path]) {
       this._resolvePath(path);
@@ -172,8 +172,8 @@ class FolderWacther {
   _supportedFile(path) {
     const p = require("path");
     const { all } = require("../support/support.js");
-    return all().includes(p.extname(path));
+    return all().includes(p.extname(path)) || this.config.enableFileExtension.includes(p.extname(path));
   }
 }
-
+// ['.js', '.css', '.html', '.map']
 module.exports = FolderWacther;

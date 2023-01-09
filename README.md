@@ -1,7 +1,10 @@
 ## 说明
 
 原插件是[flutter_assets](https://marketplace.visualstudio.com/items?itemName=icofans.flutter-assets)，作者[icofans](https://github.com/icofans),
-本插件修改了工作区目录获取的方式，和其他的一些细微修改
+
+本插件修改了工作区目录获取的方式，和其他的一些细微修改，添加了一些控制参数
+> flutter_assets 的相关配置请不要配置在pubspce.yaml文件尾部
+
 
 基于auto_assets插件修改,修改了配置方式, pubspec自动添加声明等...
 
@@ -12,6 +15,7 @@ flutter_assets:
   assets_path: assets/images
   output_path: lib/generated/assets
   package: module_home
+  enable_file_extension: []
   compress_images: false
 ```
 
@@ -19,6 +23,7 @@ flutter_assets:
 - `output_path` 代表自动生成的代码的根目录。
 - `package` 指定模块，会生成模块相应的声明代码。
 - `compress_images` 指定需不需要压缩图片。
+- `enable_file_extension` 支持自动写入pubspec的文件后缀
 
 2、在 VSCode -> Extensions 下搜索 `flutter_assets_x` 并安装, 重新打开项目
 
