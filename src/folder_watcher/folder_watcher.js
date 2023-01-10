@@ -175,5 +175,4 @@ class FolderWacther {
     return all().includes(p.extname(path)) || this.config.enableFileExtension.includes(p.extname(path));
   }
 }
-// ['.js', '.css', '.html', '.map']
 module.exports = FolderWacther;

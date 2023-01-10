@@ -1,5 +1,10 @@
 # Change Log
 
+## [V1.3.4]
+- pubspec.yaml中生产的assets内容按字符排序
+- 修复pubspec.yaml被异步写入的bug
+- 修复生产AssetNode时产生的异常字符
+
 ## [V1.3.3]
 - 添加enable_file_extension配置项
 - 修复部分bug

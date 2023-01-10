@@ -1,5 +1,6 @@
 const UI = require("../ui/ui.js");
 
+var fileWirteLock = false;
 class PubspecGen {
   constructor(pubspecPath, infos) {
     this.pubspecPath = pubspecPath;
@@ -47,13 +48,9 @@ class PubspecGen {
       var arr = new Array();
       objReadline.on('line', function (line) {
         arr.push(line);
-        // console.log('line:'+ line);
       });
       objReadline.on('close', function () {
-        //  console.log(arr);
-        // callback(arr);
 
-        // console.log(arr);
         var line;
         for (let index = 0; index < arr.length; index++) {
           const element = arr[index];
@@ -78,21 +75,25 @@ class PubspecGen {
           }
         }
 
-        console.log("fs.writeFile", arr);
         // 添加新的
         const element = arr[line];
         const indent = element != undefined ? element.replace("assets:", "") : "  ";
 
-        const items = Array.from(datas);
+        const items = Array.from(datas).sort();
         for (let index = 0; index < items.length; index++) {
           const element = items[index];
           const item = indent.repeat(2) + "- " + element;
           arr.splice(line + index + 1, 0, item);
         }
 
-
         // 重新写入文件
+        // 使用fileWirteLock防止异步同时写入文件
+        if (fileWirteLock) {
+          return;
+        }
+        fileWirteLock = true;
         fs.writeFile('pubspec.yaml', arr.join("\n"), (err) => {
+          fileWirteLock = false;
           if (err == null) {
             UI.verbose(`assets declaration: ${JSON.stringify(items)}`, 2);
           } else {
